@@ -68,10 +68,10 @@ jobs:
       # GIT SETUP
       - name: Configure Git
         run: |
-          git config user.email "${{ inputs.git_email }}"
-          git config user.name "${{ inputs.git_name }}"
           rm -rf .git
           git init
+          git config user.email "${{ inputs.git_email }}"
+          git config user.name "${{ inputs.git_name }}"
           git checkout -b deploy
 
       # GIT COMMIT
