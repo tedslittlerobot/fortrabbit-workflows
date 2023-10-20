@@ -71,6 +71,13 @@ jobs:
           git config user.email "${{ inputs.git_email }}"
           git config user.name "${{ inputs.git_name }}"
 
+      - name: Git Test
+        run: |
+          git status
+          git remote
+          git log | cat
+
+
       # GIT COMMIT
       - name: Commit everything
         if: ${{ inputs.node_version == '' }}
