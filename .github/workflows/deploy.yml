@@ -68,6 +68,7 @@ jobs:
 
       - name: Git Test
         run: |
+          git checkout develop
           git status
           git remote show origin
           git log | cat
