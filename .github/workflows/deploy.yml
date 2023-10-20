@@ -3,25 +3,28 @@ name: Deploy project to Fortrabbit
 on:
   workflow_call:
     inputs:
-      branch:
-        required: false
-        type: string
-        default: main
-        description: 'The branch to use against the remote Fortrabbit repository'
       remote:
         required: true
         type: string
         description: 'The remote Fortrabbit URL'
+      fortrabbit_branch:
+        required: false
+        type: string
+        default: main
+        description: 'The branch to use against the remote Fortrabbit repository'
       node_version:
         required: false
+        type: string
         default: ""
         description: 'The node version to use if assets need to be built'
       npm_build_cmd:
         required: false
+        type: string
         default: "npm run build"
         description: 'The command to run to build assets'
       public_build_path:
         required: false
+        type: string
         default: "public/build"
         description: 'The public bulid path'
       git_email:
@@ -72,7 +75,7 @@ jobs:
       - name: Commit everything
         if: ${{ inputs.node_version == "" }}
         run: |
-          git checkout "${{ inputs.branch }}"
+          git checkout "${{ inputs.fortrabbit_branch }}"
           git add --all
           git commit -m "Build $($CURRENT_DATE_TIME)"
         env:
@@ -80,7 +83,7 @@ jobs:
       - name: Commit everything (with new built assets)
         if: ${{ inputs.node_version != "" }}
         run: |
-          git checkout "${{ inputs.branch }}"
+          git checkout "${{ inputs.fortrabbit_branch }}"
           git add --all
           git add -f "${{ inputs.public_build_path }}"
           git commit -m "Build $($CURRENT_DATE_TIME)"
