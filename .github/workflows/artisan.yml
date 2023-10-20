@@ -31,6 +31,6 @@ jobs:
           ssh-private-key: ${{ secrets.deploy_key }}
 
       # EXECUTE
-      - name: deploy
+      - name: artisan
         run: |
           ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "${{ inputs.remote }}" 'php artisan ${{ inputs.command }} ${{ inputs.flags }}'

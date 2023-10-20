@@ -26,6 +26,6 @@ jobs:
           ssh-private-key: ${{ secrets.deploy_key }}
 
       # EXECUTE
-      - name: deploy
+      - name: execute
         run: |
           ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "${{ inputs.remote }}" '${{ inputs.command }}'
