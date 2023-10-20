@@ -7,11 +7,20 @@ on:
         required: true
         type: string
         description: 'The remote Fortrabbit URL'
+      ref:
+        required: true
+        type: string
+        description: 'The git ref to push'
       node_version:
         required: false
         type: string
         default: ""
         description: 'The node version to use if assets need to be built'
+      fortrabbit_branch:
+        required: false
+        type: string
+        default: main
+        description: 'The fortrabbit branch to push to'
       npm_build_cmd:
         required: false
         type: string
@@ -95,7 +104,7 @@ jobs:
       # PUSH TO DEPLOY
       - name: deploy
         run: |
-          git push --force "${{ inputs.remote }}"
+          git push --force "${{ inputs.remote }}" "${{ inputs.ref }}:${{ inputs.fortrabbit_branch }}"
         env:
           # This avoids a failure when the client does not know the SSH Host already
           GIT_SSH_COMMAND: "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
