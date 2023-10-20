@@ -12,11 +12,6 @@ on:
         type: string
         default: ""
         description: 'The node version to use if assets need to be built'
-      fortrabbit_branch:
-        required: false
-        type: string
-        default: main
-        description: 'The fortrabbit branch to push to'
       npm_build_cmd:
         required: false
         type: string
@@ -27,10 +22,15 @@ on:
         type: string
         default: "public/build"
         description: 'The public bulid path'
+      fortrabbit_branch:
+        required: false
+        type: string
+        default: main
+        description: 'The fortrabbit branch to push to'
       git_email:
         required: false
         type: string
-        default: nobody@github.com
+        default: deploy@github.com
         description: 'The git email address to use'
       git_name:
         required: false
