@@ -7,10 +7,6 @@ on:
         required: true
         type: string
         description: 'The remote Fortrabbit URL'
-      ref:
-        required: true
-        type: string
-        description: 'The git ref to push'
       node_version:
         required: false
         type: string
@@ -74,15 +70,9 @@ jobs:
         run: |
           git config user.email "${{ inputs.git_email }}"
           git config user.name "${{ inputs.git_name }}"
-
-      - name: Git Test
-        run: |
-          git checkout develop
-          git status
-          git remote show origin
-          git log | cat
-          git rev-list --count HEAD
-          git branch -a
+          rm -rf .git
+          git init
+          git checkout -b deploy
 
       # GIT COMMIT
       - name: Commit everything
@@ -92,7 +82,7 @@ jobs:
           git commit -m "Build $($CURRENT_DATE_TIME)"
         env:
           CURRENT_DATE_TIME: "date +%Y-%m-%d:%H-%M"
-      - name: Commit everything (with new built assets)
+      - name: Commit everything including build assets
         if: ${{ inputs.node_version != '' }}
         run: |
           git add --all
@@ -104,7 +94,7 @@ jobs:
       # PUSH TO DEPLOY
       - name: deploy
         run: |
-          git push --force "${{ inputs.remote }}" "${{ inputs.ref }}:${{ inputs.fortrabbit_branch }}"
+          git push --force "${{ inputs.remote }}" "deploy:${{ inputs.fortrabbit_branch }}"
         env:
           # This avoids a failure when the client does not know the SSH Host already
           GIT_SSH_COMMAND: "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
