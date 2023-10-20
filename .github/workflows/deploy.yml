@@ -56,11 +56,11 @@ jobs:
       # NODE / ASSET BUILD
       - name: Use Node.js 18.x
         uses: actions/setup-node@v3
-        if: ${{ inputs.node_version != "" }}
+        if: ${{ inputs.node_version != '' }}
         with:
           node-version: ${{ inputs.node_version }}
       - name: npm install and build
-        if: ${{ inputs.node_version != "" }}
+        if: ${{ inputs.node_version != '' }}
         run: |
           npm install
           ${{ inputs.npm_build_cmd }}
@@ -73,7 +73,7 @@ jobs:
 
       # GIT COMMIT
       - name: Commit everything
-        if: ${{ inputs.node_version == "" }}
+        if: ${{ inputs.node_version == '' }}
         run: |
           git checkout "${{ inputs.fortrabbit_branch }}"
           git add --all
@@ -81,7 +81,7 @@ jobs:
         env:
           CURRENT_DATE_TIME: "date +%Y-%m-%d:%H-%M"
       - name: Commit everything (with new built assets)
-        if: ${{ inputs.node_version != "" }}
+        if: ${{ inputs.node_version != '' }}
         run: |
           git checkout "${{ inputs.fortrabbit_branch }}"
           git add --all
