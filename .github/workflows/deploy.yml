@@ -74,9 +74,10 @@ jobs:
       - name: Git Test
         run: |
           git status
-          git remote
+          git remote show origin
           git log | cat
-
+          git rev-list --count HEAD
+          git branch -a
 
       # GIT COMMIT
       - name: Commit everything
