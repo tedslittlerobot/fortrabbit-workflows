@@ -1,0 +1,31 @@
+name: Execute arbitrary command against remote
+
+on:
+  workflow_call:
+    inputs:
+      remote:
+        required: true
+        type: string
+        description: 'The remote Fortrabbit SSH URL'
+      command:
+        required: true
+        type: string
+        description: 'The command to run'
+    secrets:
+      deploy_key:
+        required: true
+        description: 'A private deploy key to use with the ssh agent'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.deploy_key }}
+
+      # EXECUTE
+      - name: execute
+        run: |
+          ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "${{ inputs.remote }}" '${{ inputs.command }}'
