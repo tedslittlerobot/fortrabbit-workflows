@@ -29,6 +29,8 @@ See [webfactory/ssh-agent](https://github.com/webfactory/ssh-agent) for full det
 
 With the above setup done, you can simply add any of the following workflows!
 
+A note, it is not advisable to run any of these workflows in parallel with each other, as Fortrabbit applications do not play well when being contacted in parallel!
+
 ## Deploy
 
 > tedslittlerobot/fortrabbit-workflows/.github/workflows/deploy.yml@v1
@@ -102,6 +104,8 @@ jobs:
   deploy: # ... deploy job would go here ...
   migrate:
     uses: tedslittlerobot/fortrabbit-workflows/.github/workflows/artisan.yml@v1
+    needs:
+      - deploy
     with:
       command: migrate
       flags: --force
@@ -134,6 +138,8 @@ jobs:
   deploy: # ... deploy job would go here ...
   migrate:
     uses: tedslittlerobot/fortrabbit-workflows/.github/workflows/execute.yml@v1
+    needs:
+      - deploy
     with:
       command: ls -al
       remote: my-website-stg@deploy.eu2.frbit.com
@@ -157,3 +163,11 @@ The `deploy` workflow is also available as an action to use in any of your steps
 Heavily based on (this blog post on the Fortrabbit website)[https://blog.fortrabbit.com/how-to-use-github-actions].
 
 Uses [webfactory/ssh-agent](https://github.com/webfactory/ssh-agent) under the hood.
+
+# FAQ's
+
+## I am seeing `repository is busy: probably deployment in progress (prep)`
+
+Either you failed to heed the warning about parallelisation above, or some other service is also running something against your fortrabbit application.
+
+Do not run these commands in parallel. Github actions run in parallel by default - provide a `needs` block as in the examples above to chain them in series.
