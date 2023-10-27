@@ -1,0 +1,36 @@
+name: Execute artisan command against remote
+
+on:
+  workflow_call:
+    inputs:
+      remote:
+        required: true
+        type: string
+        description: 'The remote Fortrabbit SSH URL'
+      command:
+        required: true
+        type: string
+        description: 'The artisan command to run'
+      flags:
+        required: false
+        type: string
+        default: ''
+        description: 'Flags to append to the artisan command'
+    secrets:
+      deploy_key:
+        required: true
+        description: 'A private deploy key to use with the ssh agent'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.deploy_key }}
+
+      # EXECUTE
+      - name: artisan
+        run: |
+          ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "${{ inputs.remote }}" 'php artisan ${{ inputs.command }} ${{ inputs.flags }}'
