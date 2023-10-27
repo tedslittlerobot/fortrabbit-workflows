@@ -25,7 +25,7 @@ on:
       pre_deploy_script:
         required: false
         type: string
-        default: ".github/hooks/pre-deploy.bash"
+        default: ""
         description: 'The path to a script to run prior to deploy'
       fortrabbit_branch:
         required: false
@@ -70,10 +70,10 @@ jobs:
           npm install
           ${{ inputs.npm_build_cmd }}
 
-      # PRE-COMMIT HOOK
-      - name: Run any pre-deploy commands
-        run: |
-          [[ -x "${{inputs.pre_deploy_script}}" ]] && bash "${{inputs.pre_deploy_script}}"
+      # PRE-DEPLOY COMMAND
+      - name: Run any Pre-Deploy Commands
+        if: ${{ inputs.pre_deploy_script != '' }}
+        run: bash "${{inputs.pre_deploy_script}}"
 
       # GIT SETUP
       - name: Configure Git
