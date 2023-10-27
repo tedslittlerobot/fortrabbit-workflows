@@ -22,6 +22,11 @@ on:
         type: string
         default: "public/build"
         description: 'The public bulid path'
+      pre_deploy_script:
+        required: false
+        type: string
+        default: ".github/hooks/pre-deploy.bash"
+        description: 'The path to a script to run prior to deploy'
       fortrabbit_branch:
         required: false
         type: string
@@ -68,7 +73,7 @@ jobs:
       # PRE-COMMIT HOOK
       - name: Run any pre-deploy commands
         run: |
-          [[ -x .github/pre-deploy-hook.bash ]] && bash .github/pre-deploy-hook.bash
+          [[ -x "${{inputs.pre_deploy_script}}" ]] && bash "${{inputs.pre_deploy_script}}"
 
       # GIT SETUP
       - name: Configure Git

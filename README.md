@@ -82,6 +82,7 @@ jobs:
 - `node_version` (optional): The node version to use when building assets. If this is not set, assets will not be built.. See [actions/setup-node](https://github.com/actions/setup-node) for more details.
 - `npm_build_cmd` (optional, default: `npm run build`): The command to use to build your assets. You do not need to specify `npm install` - this is run automatically before your build command.
 - `public_build_path` (optional, default: `public/build`): You must specify where your assets build _to_. These files should usually be git ignored in you repository. This option allows us to force-add the git ignored build files to the deployment.
+- `pre_deploy_script` (optional, default: `.github/hooks/pre-deploy.bash`): You can specify a script file to run before the deployment. Scripts can do any final changes to the project before the final commit and deploy. If the script file is not there it will be ignored.
 - `fortrabbit_branch` (optional, default: main): The branch to push to on the fortrabbit remote. Odds are this doesn't need overriding.
 - `git_email` (optional, default: deploy@github.com): The git email to use for commits. Odds are this doesn't need overriding.
 - `git_name` (optional, default: Github-Fortrabbit Deployer): The git username to use for commits. Odds are this doesn't need overriding.
