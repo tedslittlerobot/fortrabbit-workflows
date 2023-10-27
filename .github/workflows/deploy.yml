@@ -67,7 +67,8 @@ jobs:
 
       # PRE-COMMIT HOOK
       - name: Run any pre-deploy commands
-        run: [[ -x .github/pre-deploy-hook.bash ]] && bash .github/pre-deploy-hook.bash
+        run: |
+          [[ -x .github/pre-deploy-hook.bash ]] && bash .github/pre-deploy-hook.bash
 
       # GIT SETUP
       - name: Configure Git
