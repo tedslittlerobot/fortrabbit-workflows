@@ -70,11 +70,6 @@ jobs:
           npm install
           ${{ inputs.npm_build_cmd }}
 
-      # PRE-DEPLOY COMMAND
-      - name: Run any Pre-Deploy Commands
-        if: ${{ inputs.pre_deploy_script != '' }}
-        run: bash "${{inputs.pre_deploy_script}}"
-
       # GIT SETUP
       - name: Configure Git
         run: |
@@ -100,6 +95,11 @@ jobs:
           git commit -m "Build $($CURRENT_DATE_TIME)"
         env:
           CURRENT_DATE_TIME: "date +%Y-%m-%d:%H-%M"
+
+      # PRE-DEPLOY COMMAND
+      - name: Run any Pre-Deploy Commands
+        if: ${{ inputs.pre_deploy_script != '' }}
+        run: bash "${{inputs.pre_deploy_script}}"
 
       # PUSH TO DEPLOY
       - name: deploy
