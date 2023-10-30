@@ -79,30 +79,31 @@ jobs:
           git config user.name "${{ inputs.git_name }}"
           git checkout -b deploy
 
-      # GIT COMMIT
-      - name: Commit everything
-        if: ${{ inputs.node_version == '' }}
-        run: |
-          git add --all
-          git commit -m "Build $($CURRENT_DATE_TIME)"
-        env:
-          CURRENT_DATE_TIME: "date +%Y-%m-%d:%H-%M"
-      - name: Commit everything including build assets
+      # GIT ADD
+      - name: Round up Project Files
+        run: git add --all
+
+      # GIT ADD (ASSETS)
+      - name: Round up Build Assets
         if: ${{ inputs.node_version != '' }}
         run: |
-          git add --all
           git add -f "${{ inputs.public_build_path }}"
+
+      # PRE-DEPLOY COMMAND
+      - name: Run Pre-Deploy Commands
+        if: ${{ inputs.pre_deploy_script != '' }}
+        run: |
+          bash "${{inputs.pre_deploy_script}}"
+
+      # GIT COMMIT
+      - name: Commit Everything for Deploy
+        run: |
           git commit -m "Build $($CURRENT_DATE_TIME)"
         env:
           CURRENT_DATE_TIME: "date +%Y-%m-%d:%H-%M"
 
-      # PRE-DEPLOY COMMAND
-      - name: Run any Pre-Deploy Commands
-        if: ${{ inputs.pre_deploy_script != '' }}
-        run: bash "${{inputs.pre_deploy_script}}"
-
       # PUSH TO DEPLOY
-      - name: deploy
+      - name: Deploy to Fortrabbit
         run: |
           git push --force "${{ inputs.remote }}" "deploy:${{ inputs.fortrabbit_branch }}"
         env:
