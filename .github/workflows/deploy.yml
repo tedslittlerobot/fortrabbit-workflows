@@ -21,7 +21,7 @@ on:
         required: false
         type: string
         default: "public/build"
-        description: 'The public bulid path'
+        description: 'The public build path'
       pre_deploy_script:
         required: false
         type: string
