@@ -25,7 +25,7 @@ on:
       php_extensions:
         required: false
         type: string
-        default: ""
+        default: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv"
         description: 'The PHP extensions to use. See shivammathur/setup-php@v2'
       npm_build_cmd:
         required: false
