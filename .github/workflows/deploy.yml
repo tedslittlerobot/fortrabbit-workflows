@@ -12,6 +12,21 @@ on:
         type: string
         default: ""
         description: 'The node version to use if assets need to be built'
+      php_version:
+        required: false
+        type: string
+        default: ""
+        description: 'The PHP version to use if PHP commands are required in the workflow. See shivammathur/setup-php@v2'
+      php_tools:
+        required: false
+        type: string
+        default: "composer"
+        description: 'The PHP tools to setup. See shivammathur/setup-php@v2'
+      php_extensions:
+        required: false
+        type: string
+        default: ""
+        description: 'The PHP extensions to use. See shivammathur/setup-php@v2'
       npm_build_cmd:
         required: false
         type: string
@@ -57,6 +72,18 @@ jobs:
       - uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.deploy_key }}
+
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        if: ${{ inputs.php_version != '' }}
+        with:
+          php-version: ${{ inputs.php_version }}
+          tools: ${{ inputs.php_tools }}
+          extensions: ${{ inputs.php_extensions }}
+
+      - name: Run Composer
+        if: ${{ inputs.php_version != '' }}
+        run: composer install --dev
 
       # NODE / ASSET BUILD
       - name: Use Node.js 18.x
