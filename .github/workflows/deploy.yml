@@ -73,6 +73,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.deploy_key }}
 
+      # PHP SETUP
       - name: Setup PHP with PECL extension
         uses: shivammathur/setup-php@v2
         if: ${{ inputs.php_version != '' }}
@@ -80,9 +81,8 @@ jobs:
           php-version: ${{ inputs.php_version }}
           tools: ${{ inputs.php_tools }}
           extensions: ${{ inputs.php_extensions }}
-
       - name: Run Composer
-        if: ${{ inputs.php_version != '' }}
+        if: ${{ inputs.php_version != '' && contains(inputs.php_tools, 'composer') }}
         run: composer install --dev
 
       # NODE / ASSET BUILD

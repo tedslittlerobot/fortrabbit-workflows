@@ -86,6 +86,9 @@ jobs:
 - `fortrabbit_branch` (optional, default: main): The branch to push to on the fortrabbit remote. Odds are this doesn't need overriding.
 - `git_email` (optional, default: deploy@github.com): The git email to use for commits. Odds are this doesn't need overriding.
 - `git_name` (optional, default: Github-Fortrabbit Deployer): The git username to use for commits. Odds are this doesn't need overriding.
+- `php_version` (optional): The PHP version to use for pre deploy tasks. This will be run on the CI runner. See [shivammathur/setup-php:PHP Support](https://github.com/marketplace/actions/setup-php-action#tada-php-support) for more details.
+- `php_tools` (optional): The PHP Tools to add. Defaults to `composer`. See [shivammathur/setup-php:Tools Support](https://github.com/marketplace/actions/setup-php-action#wrench-tools-support) for more details.
+- `php_extensions` (optional): The PHP extensions to add. Defaults to `dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv`. See [shivammathur/setup-php:PHP Extension Support](https://github.com/marketplace/actions/setup-php-action#heavy_plus_sign-php-extension-support) for more details.
 
 ## Artisan
 
