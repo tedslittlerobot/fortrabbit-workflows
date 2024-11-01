@@ -1,7 +1,7 @@
-Fortrabbit Workflows for Github
+fortrabbit Workflows for Github
 ===============================
 
-A series of useful workflows for use with Github Actions and Fortrabbit [Fortrabbit](https://fortrabbit.com/).
+A series of useful workflows for use with Github Actions and [fortrabbit](https://fortrabbit.com/).
 
 # Setup
 
@@ -13,7 +13,7 @@ ssh-keygen -t rsa -b 4096 -m pem -C deploy@github.com -f /tmp/key-github
 
 Copy the public key (on macOS, `cat /tmp/key-github.pub | pbcopy` will copy this to the clipboard for you)
 
-On your Fortrabbit dashboard, go to `Settings -> Show all settings -> App-only keys`.
+On your fortrabbit dashboard, go to `Apps -> {Appname} -> Settings -> Show all settings -> App-only keys`.
 
 Paste in your new public key and save.
 
@@ -35,7 +35,7 @@ A note, it is not advisable to run any of these workflows in parallel with each 
 
 > tedslittlerobot/fortrabbit-workflows/.github/workflows/deploy.yml@v1
 
-This will deploy your project to Fortrabbit using the git deployment method. Under the hood, this creates a new blank repository and force pushes it to the git remote.
+This will deploy your project to fortrabbit using the git deployment method. Under the hood, this creates a new blank repository and force pushes it to the git remote.
 
 The example here will respond to pushes to the develop branch, and will deploy the current (develop) branch to it.
 
@@ -56,7 +56,7 @@ jobs:
       deploy_key: "${{ secrets.STAGING_SSH_KEY }}"
 ```
 
-If you have JS and CSS assets to build, you can enable this by specifying the node version you wish to use. This will automatically run `npm install`, and `npm run build`, and expects the built files to be in the `public/build` directory (see below for details and overrides).
+If you have JS and CSS assets to build, you can enable this by specifying the Node version you wish to use. This will automatically run `npm install`, and `npm run build`, and expects the built files to be in the `public/build` directory (see below for details and overrides).
 
 ```yaml
 name: Deploy Staging

@@ -11,12 +11,32 @@ on:
         required: false
         type: string
         default: ""
-        description: 'The node version to use if assets need to be built'
-      fortrabbit_branch:
+        description: 'The node version to use if assets need to be built. See actions/setup-node@v4'
+      node_version_file:
         required: false
         type: string
-        default: main
-        description: 'The fortrabbit branch to push to'
+        default: ""
+        description: 'The node version file to use. See actions/setup-node@v4'
+      node_cache:
+        required: false
+        type: string
+        default: ""
+        description: 'The node cache to use. See actions/setup-node@v4'
+      php_version:
+        required: false
+        type: string
+        default: ""
+        description: 'The PHP version to use if PHP commands are required in the workflow. See shivammathur/setup-php@v2'
+      php_tools:
+        required: false
+        type: string
+        default: "composer"
+        description: 'The PHP tools to setup. See shivammathur/setup-php@v2'
+      php_extensions:
+        required: false
+        type: string
+        default: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv"
+        description: 'The PHP extensions to use. See shivammathur/setup-php@v2'
       npm_build_cmd:
         required: false
         type: string
@@ -26,11 +46,21 @@ on:
         required: false
         type: string
         default: "public/build"
-        description: 'The public bulid path'
+        description: 'The public build path'
+      pre_deploy_script:
+        required: false
+        type: string
+        default: ""
+        description: 'The path to a script to run prior to deploy'
+      fortrabbit_branch:
+        required: false
+        type: string
+        default: main
+        description: 'The fortrabbit branch to push to'
       git_email:
         required: false
         type: string
-        default: nobody@github.com
+        default: deploy@github.com
         description: 'The git email address to use'
       git_name:
         required: false
@@ -53,14 +83,28 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.deploy_key }}
 
+      # PHP SETUP
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        if: ${{ inputs.php_version != '' }}
+        with:
+          php-version: ${{ inputs.php_version }}
+          tools: ${{ inputs.php_tools }}
+          extensions: ${{ inputs.php_extensions }}
+      - name: Run Composer
+        if: ${{ inputs.php_version != '' && contains(inputs.php_tools, 'composer') }}
+        run: composer install --dev
+
       # NODE / ASSET BUILD
       - name: Use Node.js 18.x
-        uses: actions/setup-node@v3
-        if: ${{ inputs.node_version != '' }}
+        uses: actions/setup-node@v4
+        if: ${{ inputs.node_version != '' || inputs.node_version_file != '' }}
         with:
           node-version: ${{ inputs.node_version }}
+          node-version-file: ${{ inputs.node_version_file }}
+          cache: ${{ inputs.node_cache }}
       - name: npm install and build
-        if: ${{ inputs.node_version != '' }}
+        if: ${{ inputs.node_version != '' || inputs.node_version_file != '' }}
         run: |
           npm install
           ${{ inputs.npm_build_cmd }}
@@ -74,25 +118,31 @@ jobs:
           git config user.name "${{ inputs.git_name }}"
           git checkout -b deploy
 
-      # GIT COMMIT
-      - name: Commit everything
-        if: ${{ inputs.node_version == '' }}
+      # GIT ADD
+      - name: Round up Project Files
+        run: git add --all
+
+      # GIT ADD (ASSETS)
+      - name: Round up Build Assets
+        if: ${{ inputs.node_version != '' || inputs.node_version_file != '' }}
         run: |
-          git add --all
-          git commit -m "Build $($CURRENT_DATE_TIME)"
-        env:
-          CURRENT_DATE_TIME: "date +%Y-%m-%d:%H-%M"
-      - name: Commit everything including build assets
-        if: ${{ inputs.node_version != '' }}
-        run: |
-          git add --all
           git add -f "${{ inputs.public_build_path }}"
+
+      # PRE-DEPLOY COMMAND
+      - name: Run Pre-Deploy Commands
+        if: ${{ inputs.pre_deploy_script != '' }}
+        run: |
+          bash "${{inputs.pre_deploy_script}}"
+
+      # GIT COMMIT
+      - name: Commit Everything for Deploy
+        run: |
           git commit -m "Build $($CURRENT_DATE_TIME)"
         env:
           CURRENT_DATE_TIME: "date +%Y-%m-%d:%H-%M"
 
       # PUSH TO DEPLOY
-      - name: deploy
+      - name: Deploy to Fortrabbit
         run: |
           git push --force "${{ inputs.remote }}" "deploy:${{ inputs.fortrabbit_branch }}"
         env:
