@@ -25,7 +25,7 @@ on:
       php_version:
         required: false
         type: string
-        default: ""
+        default: "8.3"
         description: 'The PHP version to use if PHP commands are required in the workflow. See shivammathur/setup-php@v2'
       php_tools:
         required: false
@@ -37,6 +37,16 @@ on:
         type: string
         default: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv"
         description: 'The PHP extensions to use. See shivammathur/setup-php@v2'
+      php_composer_install_flags:
+        required: false
+        type: string
+        default: --no-interaction --no-progress
+        description: 'The flags to use for composer installs for the build phase. Defaults to --no-interaction --no-progress'
+      php_composer_cache:
+        required: false
+        type: boolean
+        default: false
+        description: 'Whether to cache composer dependencies. Uses method described in shivammathur/setup-php@v2'
       npm_build_cmd:
         required: false
         type: string
@@ -91,9 +101,23 @@ jobs:
           php-version: ${{ inputs.php_version }}
           tools: ${{ inputs.php_tools }}
           extensions: ${{ inputs.php_extensions }}
+
+      - name: Get composer cache directory
+        id: composer-cache
+        if: ${{ inputs.php_composer_cache }}
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        if: ${{ inputs.php_composer_cache }}
+        with:
+          path: "${{ steps.composer-cache.outputs.dir }}"
+          key: "${{ runner.os }}-php${{ inputs.php_version }}-composer-${{ hashFiles('**/composer.lock') }}"
+          restore-keys: "${{ runner.os }}-php${{ inputs.php_version }}-composer-"
+
       - name: Run Composer
         if: ${{ inputs.php_version != '' && contains(inputs.php_tools, 'composer') }}
-        run: composer install --dev
+        run: composer install ${{ inputs.php_composer_install_flags }}
 
       # NODE / ASSET BUILD
       - name: Use Node.js 18.x
