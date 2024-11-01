@@ -11,7 +11,17 @@ on:
         required: false
         type: string
         default: ""
-        description: 'The node version to use if assets need to be built'
+        description: 'The node version to use if assets need to be built. See actions/setup-node@v4'
+      node_version_file:
+        required: false
+        type: string
+        default: ""
+        description: 'The node version file to use. See actions/setup-node@v4'
+      node_cache:
+        required: false
+        type: string
+        default: ""
+        description: 'The node cache to use. See actions/setup-node@v4'
       php_version:
         required: false
         type: string
@@ -87,12 +97,14 @@ jobs:
 
       # NODE / ASSET BUILD
       - name: Use Node.js 18.x
-        uses: actions/setup-node@v3
-        if: ${{ inputs.node_version != '' }}
+        uses: actions/setup-node@v4
+        if: ${{ inputs.node_version != '' || inputs.node_version_file != '' }}
         with:
           node-version: ${{ inputs.node_version }}
+          node-version-file: ${{ inputs.node_version_file }}
+          cache: ${{ inputs.node_cache }}
       - name: npm install and build
-        if: ${{ inputs.node_version != '' }}
+        if: ${{ inputs.node_version != '' || inputs.node_version_file != '' }}
         run: |
           npm install
           ${{ inputs.npm_build_cmd }}
@@ -112,7 +124,7 @@ jobs:
 
       # GIT ADD (ASSETS)
       - name: Round up Build Assets
-        if: ${{ inputs.node_version != '' }}
+        if: ${{ inputs.node_version != '' || inputs.node_version_file != '' }}
         run: |
           git add -f "${{ inputs.public_build_path }}"
 
