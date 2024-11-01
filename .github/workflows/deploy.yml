@@ -40,8 +40,8 @@ on:
       php_composer_install_flags:
         required: false
         type: string
-        default: --prefer-dist
-        description: 'The flags to use for composer installs. Defaults to --prefer-dist'
+        default: --no-interaction --no-progress
+        description: 'The flags to use for composer installs for the build phase. Defaults to --no-interaction --no-progress'
       php_composer_cache:
         required: false
         type: boolean
